@@ -1,65 +1,120 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+import PostCard from '@/app/Components/PostCard'
+import { api, Post } from '@/app/lib/api'
+import { useEffect, useState } from 'react'
+
+const tags = [
+	{ value: 'all', label: 'Все' },
+	{ value: 'web', label: 'Web' },
+	{ value: 'ai', label: 'AI' },
+	{ value: 'mobile', label: 'Mobile' },
+	{ value: 'os', label: 'OS' },
+]
+
+export default function HomePage() {
+	const [posts, setPosts] = useState<Post[]>([])
+	const [loading, setLoading] = useState(true)
+	const [error, setError] = useState('')
+	const [activeTag, setActiveTag] = useState('all')
+
+	useEffect(() => {
+		const load = async () => {
+			try {
+				const data = await api.getPosts()
+				setPosts(data)
+			} catch {
+				setError('Не удалось загрузить статьи')
+			} finally {
+				setLoading(false)
+			}
+		}
+		void load()
+	}, [])
+
+	const filtered =
+		activeTag === 'all' ? posts : posts.filter(p => p.tag === activeTag)
+
+	return (
+		<div className='max-w-5xl mx-auto'>
+			{/* Шапка страницы */}
+			<div className='mb-8'>
+				<h1 className='text-2xl font-medium text-gray-900 dark:text-white mb-1'>
+					OREL <span className='text-violet-600'>News</span>
+				</h1>
+				<p className='text-sm text-gray-500 dark:text-gray-400'>
+					Блог о разработке — веб, мобильные приложения, AI и ОС
+				</p>
+			</div>
+
+			{/* Баннер OREL Insider */}
+			<div className='bg-violet-50 dark:bg-violet-950 border border-violet-200 dark:border-violet-800 rounded-2xl px-5 py-4 mb-8 flex items-center justify-between gap-4'>
+				<div>
+					<p className='text-sm font-medium text-violet-800 dark:text-violet-200'>
+						OREL Insider
+					</p>
+					<p className='text-xs text-violet-600 dark:text-violet-400 mt-0.5'>
+						Скачивай тестовые версии приложений раньше всех
+					</p>
+				</div>
+				<a
+					href='https://orel-insider.vercel.app'
+					target='_blank'
+					rel='noopener noreferrer'
+					className='text-xs font-medium text-violet-700 dark:text-violet-300 border border-violet-300 dark:border-violet-700 rounded-xl px-3.5 py-2 hover:bg-violet-100 dark:hover:bg-violet-900 transition-colors shrink-0'
+				>
+					Перейти →
+				</a>
+			</div>
+
+			{/* Фильтр по тегам */}
+			<div className='flex gap-2 mb-6 flex-wrap'>
+				{tags.map(tag => (
+					<button
+						key={tag.value}
+						onClick={() => setActiveTag(tag.value)}
+						className={`text-xs px-3.5 py-1.5 rounded-full border transition-colors cursor-pointer ${
+							activeTag === tag.value
+								? 'bg-violet-600 text-white border-violet-600'
+								: 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-violet-300'
+						}`}
+					>
+						{tag.label}
+					</button>
+				))}
+			</div>
+
+			{/* Статьи */}
+			{loading && (
+				<div className='grid gap-4 sm:grid-cols-2'>
+					{[...Array(4)].map((_, i) => (
+						<div
+							key={i}
+							className='bg-gray-100 dark:bg-gray-800 rounded-2xl h-44 animate-pulse'
+						/>
+					))}
+				</div>
+			)}
+
+			{error && (
+				<div className='text-center py-16'>
+					<p className='text-sm text-red-500'>{error}</p>
+				</div>
+			)}
+
+			{!loading && !error && filtered.length === 0 && (
+				<div className='text-center py-16'>
+					<p className='text-sm text-gray-400'>Статей пока нет</p>
+				</div>
+			)}
+
+			{!loading && !error && filtered.length > 0 && (
+				<div className='grid gap-4 sm:grid-cols-2'>
+					{filtered.map(post => (
+						<PostCard key={post._id} post={post} />
+					))}
+				</div>
+			)}
+		</div>
+	)
 }
