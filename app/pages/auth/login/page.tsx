@@ -99,7 +99,7 @@ export default function LoginPage() {
 					<p className='text-center text-sm text-gray-500 mt-6'>
 						Нет аккаунта?{' '}
 						<Link
-							href='/pages/auth/register'
+							href='/pages/auth'
 							className='text-violet-600 hover:underline font-medium'
 						>
 							Зарегистрироваться
