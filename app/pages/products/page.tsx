@@ -32,6 +32,14 @@ const products = [
 		tagColor: 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300',
 		highlight: true,
 	},
+	{
+		name: 'OREL ID',
+		description: 'Официальный сайт OREL ID — управление аккаунтом, сессии, безопасность.',
+		url: 'https://orel-id.istoriyaislama.workers.dev/pages/user/profile',
+		tag: 'Сайт',
+		tagColor: 'bg-violet-50 text-violet-700 dark:bg-violet-950 dark:text-violet-300',
+		highlight: true,
+	},
 ]
 
 export default function ProductsPage() {

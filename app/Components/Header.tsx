@@ -67,7 +67,7 @@ export default function Header() {
 				{/* Правая часть */}
 				<div className="flex items-center gap-2">
 
-					{/* Язык */}
+					{/* Язык 
 					<select
 						value={lang}
 						onChange={e => handleLangChange(e.target.value)}
@@ -76,7 +76,7 @@ export default function Header() {
 						{langs.map(l => (
 							<option key={l} value={l}>{l}</option>
 						))}
-					</select>
+					</select>*/}
 
 					{/* Поддержка — только десктоп */}
 					<Link
