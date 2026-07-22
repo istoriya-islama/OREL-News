@@ -10,6 +10,7 @@ const tags = [
 	{ value: 'ai', label: 'AI' },
 	{ value: 'mobile', label: 'Mobile' },
 	{ value: 'os', label: 'OS' },
+	{ value: 'documentation', label: 'Документация' },
 ]
 
 export default function HomePage() {
