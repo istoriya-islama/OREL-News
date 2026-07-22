@@ -21,7 +21,7 @@ export interface CreateUserDto {
 	name: string
 	email: string
 	password: string
-	recaptchaToken: string
+	recaptchaToken?: string
 }
 
 export interface LoginDto {

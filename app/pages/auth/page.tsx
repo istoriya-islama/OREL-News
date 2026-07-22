@@ -24,7 +24,7 @@ export default function AuthPage() {
 		setLoading(true)
 
 		try {
-			await api.register({ name, email, password, recaptchaToken: 'skip' })
+			await api.register({ name, email, password })
 			await login(email, password)
 			router.push('/')
 		} catch (err) {
