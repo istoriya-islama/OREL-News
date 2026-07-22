@@ -68,7 +68,7 @@ export default function PostPage() {
 
 	const handleDeleteComment = async (index: number) => {
 		try {
-			await api.deleteComment(id, index)
+			await api.deleteComment(id, index.toString())
 			setPost(prev =>
 				prev
 					? { ...prev, comments: prev.comments.filter((_, i) => i !== index) }
