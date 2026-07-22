@@ -4,10 +4,14 @@ const API_URL = 'https://orel-insider-api.onrender.com'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
+export type UserRole = 'user' | 'developer' | 'developer_verified' | 'admin'
+export type PostTag = 'web' | 'ai' | 'mobile' | 'os' | 'documentation'
+
 export interface User {
 	_id: string
 	name: string
 	email: string
+	role: UserRole
 	isAdmin: boolean
 	createdAt: string
 	updatedAt: string
@@ -30,9 +34,8 @@ export interface LoginResponse {
 	user: User
 }
 
-export type PostTag = 'web' | 'ai' | 'mobile' | 'os'
-
 export interface Comment {
+	_id: string
 	authorId: string
 	authorName: string
 	text: string
@@ -51,10 +54,10 @@ export interface Post {
 	updatedAt: string
 }
 
-// ─── API ─────────────────────────────────────────────────────────────────────
+// ─── API (аккаунт + посты + комментарии) ─────────────────────────────────────
 
 export const api = {
-	// ── Auth (БЕЗ автообновления) ──────────────────────────────────────────
+	// ── Без автообновления ────────────────────────────────────────────────
 
 	async register(data: CreateUserDto): Promise<User> {
 		const res = await fetch(`${API_URL}/users`, {
@@ -63,12 +66,10 @@ export const api = {
 			credentials: 'include',
 			body: JSON.stringify(data),
 		})
-
 		if (!res.ok) {
 			const error = await res.json()
 			throw new Error(error.message || 'Registration failed')
 		}
-
 		return res.json()
 	},
 
@@ -79,12 +80,10 @@ export const api = {
 			credentials: 'include',
 			body: JSON.stringify(data),
 		})
-
 		if (!res.ok) {
 			const error = await res.json()
 			throw new Error(error.message || 'Login failed')
 		}
-
 		return res.json()
 	},
 
@@ -93,11 +92,9 @@ export const api = {
 			method: 'POST',
 			credentials: 'include',
 		})
-
 		if (!res.ok) {
 			throw new Error('Refresh failed')
 		}
-
 		return res.json()
 	},
 
@@ -107,12 +104,10 @@ export const api = {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ email }),
 		})
-
 		if (!res.ok) {
 			const error = await res.json()
 			throw new Error(error.message || 'Request failed')
 		}
-
 		return res.json()
 	},
 
@@ -125,39 +120,30 @@ export const api = {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ token, password }),
 		})
-
 		if (!res.ok) {
 			const error = await res.json()
 			throw new Error(error.message || 'Reset failed')
 		}
-
 		return res.json()
 	},
 
-	// ── Auth (С автообновлением) ───────────────────────────────────────────
+	// ── С автообновлением ─────────────────────────────────────────────────
 
 	async logout(): Promise<{ message: string }> {
-		const res = await fetch(`${API_URL}/auth/logout`, {
+		const res = await fetchWithAuth(`${API_URL}/auth/logout`, {
 			method: 'POST',
-			credentials: 'include',
 		})
-
 		if (!res.ok) {
 			throw new Error('Logout failed')
 		}
-
 		return res.json()
 	},
 
-	// ── User ───────────────────────────────────────────────────────────────
-
 	async getCurrentUser(): Promise<User> {
 		const res = await fetchWithAuth(`${API_URL}/users/me`)
-
 		if (!res.ok) {
 			throw new Error('Not authenticated')
 		}
-
 		return res.json()
 	},
 
@@ -170,12 +156,10 @@ export const api = {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(data),
 		})
-
 		if (!res.ok) {
 			const error = await res.json()
 			throw new Error(error.message || 'Update failed')
 		}
-
 		return res.json()
 	},
 
@@ -183,26 +167,22 @@ export const api = {
 		const res = await fetchWithAuth(`${API_URL}/users/${id}`, {
 			method: 'DELETE',
 		})
-
 		if (!res.ok) {
 			const error = await res.json()
 			throw new Error(error.message || 'Delete failed')
 		}
-
 		return res.json()
 	},
 
-	// ── Posts (публичные, БЕЗ автообновления) ─────────────────────────────
+	// ── Посты (публичные) ─────────────────────────────────────────────────
 
 	async getPosts(lang: string = 'ru'): Promise<Post[]> {
 		const res = await fetch(`${API_URL}/posts?lang=${lang}`, {
 			credentials: 'include',
 		})
-
 		if (!res.ok) {
 			throw new Error('Failed to fetch posts')
 		}
-
 		return res.json()
 	},
 
@@ -210,15 +190,13 @@ export const api = {
 		const res = await fetch(`${API_URL}/posts/${id}?lang=${lang}`, {
 			credentials: 'include',
 		})
-
 		if (!res.ok) {
 			throw new Error('Post not found')
 		}
-
 		return res.json()
 	},
 
-	// ── Comments (С автообновлением) ──────────────────────────────────────
+	// ── Комментарии ───────────────────────────────────────────────────────
 
 	async addComment(postId: string, text: string): Promise<Comment[]> {
 		const res = await fetchWithAuth(`${API_URL}/posts/${postId}/comments`, {
@@ -226,41 +204,35 @@ export const api = {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ text }),
 		})
-
 		if (!res.ok) {
 			const error = await res.json()
 			throw new Error(error.message || 'Failed to add comment')
 		}
-
 		return res.json()
 	},
 
 	async deleteComment(
 		postId: string,
-		index: number,
+		commentId: string,
 	): Promise<{ message: string }> {
 		const res = await fetchWithAuth(
-			`${API_URL}/posts/${postId}/comments/${index}`,
+			`${API_URL}/posts/${postId}/comments/${commentId}`,
 			{ method: 'DELETE' },
 		)
-
 		if (!res.ok) {
 			const error = await res.json()
 			throw new Error(error.message || 'Failed to delete comment')
 		}
-
 		return res.json()
 	},
 
-	// ── Admin posts (С автообновлением) ───────────────────────────────────
+	// ── Админ посты ───────────────────────────────────────────────────────
 
 	async adminGetPosts(): Promise<Post[]> {
 		const res = await fetchWithAuth(`${API_URL}/admin/posts`)
-
 		if (!res.ok) {
 			throw new Error('Failed to fetch posts')
 		}
-
 		return res.json()
 	},
 
@@ -274,12 +246,10 @@ export const api = {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(data),
 		})
-
 		if (!res.ok) {
 			const error = await res.json()
 			throw new Error(error.message || 'Failed to create post')
 		}
-
 		return res.json()
 	},
 
@@ -292,12 +262,10 @@ export const api = {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(data),
 		})
-
 		if (!res.ok) {
 			const error = await res.json()
 			throw new Error(error.message || 'Failed to update post')
 		}
-
 		return res.json()
 	},
 
@@ -305,12 +273,10 @@ export const api = {
 		const res = await fetchWithAuth(`${API_URL}/admin/posts/${id}/publish`, {
 			method: 'PATCH',
 		})
-
 		if (!res.ok) {
 			const error = await res.json()
 			throw new Error(error.message || 'Failed to publish post')
 		}
-
 		return res.json()
 	},
 
@@ -318,12 +284,10 @@ export const api = {
 		const res = await fetchWithAuth(`${API_URL}/admin/posts/${id}/unpublish`, {
 			method: 'PATCH',
 		})
-
 		if (!res.ok) {
 			const error = await res.json()
 			throw new Error(error.message || 'Failed to unpublish post')
 		}
-
 		return res.json()
 	},
 
@@ -331,12 +295,10 @@ export const api = {
 		const res = await fetchWithAuth(`${API_URL}/admin/posts/${id}`, {
 			method: 'DELETE',
 		})
-
 		if (!res.ok) {
 			const error = await res.json()
 			throw new Error(error.message || 'Failed to delete post')
 		}
-
 		return res.json()
 	},
 }
