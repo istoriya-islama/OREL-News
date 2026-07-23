@@ -7,6 +7,7 @@ import { useAuth } from '@/app/store/auth'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 
 export default function AuthPage() {
 	const router = useRouter()
@@ -17,14 +18,21 @@ export default function AuthPage() {
 	const [password, setPassword] = useState('')
 	const [error, setError] = useState('')
 	const [loading, setLoading] = useState(false)
+	const { executeRecaptcha } = useGoogleReCaptcha()
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
 		setError('')
 		setLoading(true)
+		const recaptchaToken = await executeRecaptcha!('register')
 
 		try {
-			await api.register({ name, email, password })
+			await api.register({
+				name: name,
+				email: email,
+				password: password,
+				recaptchaToken,
+			})
 			await login(email, password)
 			router.push('/')
 		} catch (err) {
