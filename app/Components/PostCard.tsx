@@ -15,6 +15,7 @@ const tagLabels: Record<string, string> = {
 	ai: 'AI',
 	mobile: 'Mobile',
 	os: 'OS',
+	documentation: 'Documentation'
 }
 
 interface PostCardProps {

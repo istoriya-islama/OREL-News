@@ -15,7 +15,7 @@ const tagOptions: { value: PostTag; label: string }[] = [
 	{ value: 'ai', label: 'AI' },
 	{ value: 'mobile', label: 'Mobile' },
 	{ value: 'os', label: 'OS' },
-	{ value: 'documentation', label: 'Документация' },
+	{ value: 'documentation', label: 'Documentation' },
 ]
 
 const tagStyles: Record<string, string> = {

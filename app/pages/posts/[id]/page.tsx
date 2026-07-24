@@ -16,11 +16,11 @@ const tagStyles: Record<string, string> = {
 }
 
 const tagLabels: Record<string, string> = {
-	web: 'Веб',
+	web: 'Web',
 	ai: 'AI',
 	mobile: 'Mobile',
 	os: 'OS',
-	documentation: 'Документация'
+	documentation: 'Documentation'
 }
 
 export default function PostPage() {
