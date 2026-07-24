@@ -12,13 +12,15 @@ const tagStyles: Record<string, string> = {
 	ai: 'bg-violet-50 text-violet-700 dark:bg-violet-950 dark:text-violet-300',
 	mobile: 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300',
 	os: 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300',
+	documentation: 'bg-gray-50 text-gray-700 dark:bg-gray-950 dark:text-gray-300'
 }
 
 const tagLabels: Record<string, string> = {
-	web: 'Web',
+	web: 'Веб',
 	ai: 'AI',
 	mobile: 'Mobile',
 	os: 'OS',
+	documentation: 'Документация'
 }
 
 export default function PostPage() {

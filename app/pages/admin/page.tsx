@@ -11,7 +11,7 @@ import { useAuth } from '@/app/store/auth'
 type View = 'login' | 'list' | 'editor'
 
 const tagOptions: { value: PostTag; label: string }[] = [
-	{ value: 'web', label: 'Web' },
+	{ value: 'web', label: 'Веб' },
 	{ value: 'ai', label: 'AI' },
 	{ value: 'mobile', label: 'Mobile' },
 	{ value: 'os', label: 'OS' },
