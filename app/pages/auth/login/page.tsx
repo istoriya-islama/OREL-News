@@ -68,7 +68,7 @@ export default function LoginPage() {
 									Пароль
 								</label>
 								<Link
-									href='/pages/auth/forgot-password'
+									href='https://orel-id.istoriyaislama.workers.dev/pages/auth/forgot-password'
 									className='text-xs text-violet-600 hover:underline'
 								>
 									Забыл пароль?
