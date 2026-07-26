@@ -67,12 +67,12 @@ export default function LoginPage() {
 								<label className='text-sm text-gray-600 dark:text-gray-400'>
 									Пароль
 								</label>
-								<Link
+								{/*<Link
 									href='https://orel-id.istoriyaislama.workers.dev/pages/auth/forgot-password'
 									className='text-xs text-violet-600 hover:underline'
 								>
 									Забыл пароль?
-								</Link>
+								</Link>*/}
 							</div>
 							<Input
 								type='password'
