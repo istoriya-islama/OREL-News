@@ -130,7 +130,7 @@ const ORM_STYLES = `
   .orm-doc .orm-blockquote {
     border-left: 3px solid #d1d5db;
     margin: 0.75rem 0; padding: 0.4rem 1rem;
-    background: #f9fafb; border-radius: 0 0.4rem 0.4rem 0;
+    background: transparent; border-radius: 0 0.4rem 0.4rem 0;
     font-size: 0.875rem; color: #9ca3af;
   }
   .dark .orm-doc .orm-blockquote { background: #111827; border-color: #374151; color: #d1d5db; }
@@ -235,7 +235,7 @@ export default function PostPage() {
   if (error || !post) {
     return (
       <div className="max-w-2xl mx-auto text-center py-20">
-        <p className="text-gray-400 mb-4">{error || 'Статья не найдена'}</p>
+        <p className="text-gray-400 dark:text-gray-100 mb-4">{error || 'Статья не найдена'}</p>
         <Button variant="secondary" onClick={() => router.push('/')}>← На главную</Button>
       </div>
     )
@@ -251,7 +251,7 @@ export default function PostPage() {
       {/* Кнопка назад */}
       <button
         onClick={() => router.back()}
-        className="text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 mb-6 flex items-center gap-1 transition-colors"
+        className="text-sm text-gray-400 dark:text-gray-100 hover:text-gray-600 dark:hover:text-gray-300 mb-6 flex items-center gap-1 transition-colors"
       >
         ← Назад
       </button>
@@ -267,7 +267,7 @@ export default function PostPage() {
       </h1>
 
       {/* Дата */}
-      <p className="text-sm text-gray-400 dark:text-gray-500 mb-8">
+      <p className="text-sm text-gray-400 dark:text-gray-100 mb-8">
         {formatDate(post.createdAt)}
       </p>
 
@@ -286,12 +286,12 @@ export default function PostPage() {
         <h2 className="text-base font-medium text-gray-900 dark:text-white mb-6">
           Комментарии{' '}
           {post.comments.length > 0 && (
-            <span className="text-gray-400 font-normal">({post.comments.length})</span>
+            <span className="text-gray-400 dark:text-gray-100 font-normal">({post.comments.length})</span>
           )}
         </h2>
 
         {post.comments.length === 0 && (
-          <p className="text-sm text-gray-400 mb-6">Пока нет комментариев. Будь первым!</p>
+          <p className="text-sm text-gray-400 dark:text-gray-100 mb-6">Пока нет комментариев. Будь первым!</p>
         )}
 
         <div className="space-y-4 mb-8">
@@ -307,7 +307,7 @@ export default function PostPage() {
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400">{formatDate(comment.createdAt)}</span>
+                  <span className="text-xs text-gray-400 dark:text-gray-100">{formatDate(comment.createdAt)}</span>
                   {user && (user._id === comment.authorId || user.isAdmin) && (
                     <button
                       onClick={() => void handleDeleteComment(index)}
@@ -318,7 +318,7 @@ export default function PostPage() {
                   )}
                 </div>
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+              <p className="text-sm text-gray-600 dark:text-gray-100 leading-relaxed">
                 {comment.text}
               </p>
             </div>
