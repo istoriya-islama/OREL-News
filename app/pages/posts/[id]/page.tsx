@@ -36,7 +36,7 @@ const ORM_STYLES = `
     padding: 0.15em 0.45em;
     border-radius: 0.3rem;
   }
-  .dark .orm-code { background: #2e1065; color: #c4b5fd; }
+  :is(.dark, .dark *) .orm-code { background: #2e1065; color: #c4b5fd; }
 
   .orm-terminal {
     display: inline-flex;
@@ -57,7 +57,7 @@ const ORM_STYLES = `
     color: inherit; margin: 1.5rem 0 0.5rem;
     border-bottom: 1px solid #e5e7eb; padding-bottom: 0.35rem;
   }
-  .dark .orm-news .orm-h1 { border-color: #1f2937; }
+  :is(.dark, .dark *) .orm-news .orm-h1 { border-color: #1f2937; }
   .orm-news .orm-h2 {
     font-size: 1.05rem; font-weight: 600;
     color: inherit; margin: 1.2rem 0 0.4rem;
@@ -71,7 +71,7 @@ const ORM_STYLES = `
     font-size: 0.9rem; line-height: 1.8;
     color: #374151; margin: 0;
   }
-  .dark .orm-news .orm-p { color: #e5e7eb; }
+  :is(.dark, .dark *) .orm-news .orm-p { color: #e5e7eb; }
   .orm-news .orm-spacer { height: 0.55rem; }
   .orm-news .orm-list {
     margin: 0.4rem 0 0.4rem 1rem;
@@ -81,7 +81,7 @@ const ORM_STYLES = `
     font-size: 0.9rem; line-height: 1.65;
     color: #374151; position: relative; padding-left: 1rem;
   }
-  .dark .orm-news .orm-list li { color: #e5e7eb; }
+  :is(.dark, .dark *) .orm-news .orm-list li { color: #e5e7eb; }
   .orm-news .orm-list li::before { content: '·'; position: absolute; left: 0; color: #7c3aed; font-size: 1.1rem; line-height: 1.4; }
   .orm-news .orm-blockquote {
     border-left: 3px solid #7c3aed;
@@ -89,7 +89,7 @@ const ORM_STYLES = `
     background: #f5f3ff; border-radius: 0 0.5rem 0.5rem 0;
     font-size: 0.875rem; color: #4b5563; font-style: italic;
   }
-  .dark .orm-news .orm-blockquote { background: #1e1730; color: #c4b5fd; }
+  :is(.dark, .dark *) .orm-news .orm-blockquote { background: #1e1730; color: #c4b5fd; }
 
   /* ── Doc стиль ───────────────────────────────────────── */
   .orm-doc .orm-h1 {
@@ -97,14 +97,14 @@ const ORM_STYLES = `
     color: inherit; margin: 0 0 0.3rem;
     padding-bottom: 0.5rem; border-bottom: 2px solid #e5e7eb;
   }
-  .dark .orm-doc .orm-h1 { border-color: #1f2937; }
+  :is(.dark, .dark *) .orm-doc .orm-h1 { border-color: #1f2937; }
   .orm-doc .orm-h2 {
     font-size: 1.1rem; font-weight: 600;
     color: inherit; margin: 2rem 0 0.5rem;
     padding-top: 1.5rem; border-top: 1px solid #f3f4f6;
     scroll-margin-top: 5rem;
   }
-  .dark .orm-doc .orm-h2 { border-color: #111827; }
+  :is(.dark, .dark *) .orm-doc .orm-h2 { border-color: #111827; }
   .orm-doc .orm-h3 {
     font-size: 0.875rem; font-weight: 600;
     color: #6d28d9; margin: 1.2rem 0 0.3rem;
@@ -115,7 +115,7 @@ const ORM_STYLES = `
     font-size: 0.875rem; line-height: 1.85;
     color: #374151; margin: 0;
   }
-  .dark .orm-doc .orm-p { color: #e5e7eb; }
+  :is(.dark, .dark *) .orm-doc .orm-p { color: #e5e7eb; }
   .orm-doc .orm-spacer { height: 0.4rem; }
   .orm-doc .orm-list {
     margin: 0.5rem 0 0.5rem 1.1rem;
@@ -125,7 +125,7 @@ const ORM_STYLES = `
     font-size: 0.875rem; line-height: 1.7;
     color: #374151; position: relative; padding-left: 1rem;
   }
-  .dark .orm-doc .orm-list li { color: #e5e7eb; }
+  :is(.dark, .dark *) .orm-doc .orm-list li { color: #e5e7eb; }
   .orm-doc .orm-list li::before { content: '–'; position: absolute; left: 0; color: #7c3aed; }
   .orm-doc .orm-blockquote {
     border-left: 3px solid #d1d5db;
@@ -133,7 +133,7 @@ const ORM_STYLES = `
     background: transparent; border-radius: 0 0.4rem 0.4rem 0;
     font-size: 0.875rem; color: #9ca3af;
   }
-  .dark .orm-doc .orm-blockquote { background: #111827; border-color: #374151; color: #d1d5db; }
+  :is(.dark, .dark *) .orm-doc .orm-blockquote { background: #111827; border-color: #374151; color: #d1d5db; }
 `
 
 // ── Вспомогалки ──────────────────────────────────────────────────────────────
