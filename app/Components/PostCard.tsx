@@ -4,10 +4,11 @@ import Link from 'next/link'
 import { Post } from '@/app/lib/api'
 
 const tagStyles: Record<string, string> = {
-	web: 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300',
-	ai: 'bg-violet-50 text-violet-700 dark:bg-violet-950 dark:text-violet-300',
-	mobile: 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300',
-	os: 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300',
+	web: 'bg-[var(--tag-web-bg)] text-[var(--tag-web-text)]',
+	ai: 'bg-[var(--tag-ai-bg)] text-[var(--tag-ai-text)]',
+	mobile: 'bg-[var(--tag-mobile-bg)] text-[var(--tag-mobile-text)]',
+	os: 'bg-[var(--tag-os-bg)] text-[var(--tag-os-text)]',
+	documentation: 'bg-[var(--tag-doc-bg)] text-[var(--tag-doc-text)]',
 }
 
 const tagLabels: Record<string, string> = {
@@ -20,12 +21,12 @@ const tagLabels: Record<string, string> = {
 
 interface PostCardProps {
 	post: Post
+	featured?: boolean
 }
 
-export default function PostCard({ post }: PostCardProps) {
-	// Показываем первые 150 символов как превью
-	const preview = post.body.length > 150
-		? post.body.slice(0, 150) + '...'
+export default function PostCard({ post, featured = false }: PostCardProps) {
+	const preview = post.body.length > (featured ? 220 : 130)
+		? post.body.slice(0, featured ? 220 : 130) + '...'
 		: post.body
 
 	const date = new Date(post.createdAt).toLocaleDateString('ru-RU', {
@@ -35,29 +36,25 @@ export default function PostCard({ post }: PostCardProps) {
 	})
 
 	return (
-		<Link href={`/pages/posts/${post._id}`}>
-			<div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-5 hover:border-violet-300 dark:hover:border-violet-700 transition-colors cursor-pointer">
+		<Link href={`/pages/posts/${post._id}`} className={featured ? 'sm:col-span-2' : ''}>
+			<div className="bg-surface rounded-3xl p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.07)] transition-shadow cursor-pointer h-full">
 
-				{/* Тег */}
-				<span className={`text-xs font-medium px-2.5 py-1 rounded-full ${tagStyles[post.tag] ?? tagStyles.web}`}>
+				<span className={`text-xs font-semibold px-3 py-1 rounded-full ${tagStyles[post.tag] ?? tagStyles.web}`}>
 					{tagLabels[post.tag] ?? post.tag}
 				</span>
 
-				{/* Заголовок */}
-				<h2 className="text-base font-medium text-gray-900 dark:text-white mt-3 mb-2 leading-snug">
+				<h2 className={`font-serif font-semibold text-text-primary mt-4 mb-2 leading-snug ${featured ? 'text-xl' : 'text-base'}`}>
 					{post.title}
 				</h2>
 
-				{/* Превью */}
-				<p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+				<p className="text-sm text-text-secondary leading-relaxed">
 					{preview}
 				</p>
 
-				{/* Футер */}
-				<div className="flex items-center justify-between mt-4">
-					<span className="text-xs text-gray-400 dark:text-gray-500">{date}</span>
-					<span className="text-xs text-gray-400 dark:text-gray-500">
-						{!post.comments ? 'Нет комментариев' : `${post.comments.length} комм.`}
+				<div className="flex items-center justify-between mt-5">
+					<span className="text-xs text-text-muted">{date}</span>
+					<span className="text-xs text-text-muted">
+						{!post.comments || post.comments.length === 0 ? 'Нет комментариев' : `${post.comments.length} комм.`}
 					</span>
 				</div>
 			</div>

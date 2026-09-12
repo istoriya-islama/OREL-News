@@ -4,7 +4,6 @@ import PostCard from '@/app/Components/PostCard'
 import { api, Post } from '@/app/lib/api'
 import { useEffect, useState } from 'react'
 
-// Документация убрана из фильтров — она живёт на /pages/docs
 const tags = [
   { value: 'all', label: 'Все' },
   { value: 'web', label: 'Web' },
@@ -23,7 +22,6 @@ export default function HomePage() {
     const load = async () => {
       try {
         const data = await api.getPosts()
-        // Документация не показывается в ленте новостей
         setPosts(data.filter(p => p.tag !== 'documentation'))
       } catch {
         setError('Не удалось загрузить статьи')
@@ -38,21 +36,22 @@ export default function HomePage() {
 
   return (
     <div className="max-w-5xl mx-auto">
-      {/* Шапка страницы */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-medium text-gray-900 dark:text-white mb-1">
-          OREL <span className="text-violet-600">News</span>
+      {/* Масштадный editorial-заголовок в мягкой панели */}
+      <div className="bg-surface-soft rounded-[32px] px-8 py-11 sm:px-12 sm:py-14 mb-6">
+        <div className="text-xs font-medium text-accent mb-4">Блог о разработке</div>
+        <h1 className="font-serif text-3xl sm:text-4xl font-semibold text-text-primary leading-tight max-w-xl mb-3">
+          Веб, мобильные приложения, AI и операционки — без воды
         </h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Блог о разработке — веб, мобильные приложения, AI и ОС
+        <p className="text-sm text-text-secondary max-w-md leading-relaxed">
+          Разборы, релизы и заметки от команды OREL. Обновляется по мере того, как что-то ломается или взлетает.
         </p>
       </div>
 
       {/* Баннер OREL Insider */}
-      <div className="bg-violet-50 dark:bg-violet-950 border border-violet-200 dark:border-violet-800 rounded-2xl px-5 py-4 mb-8 flex items-center justify-between gap-4">
+      <div className="bg-accent-soft-bg rounded-3xl px-6 py-5 mb-8 flex items-center justify-between gap-4">
         <div>
-          <p className="text-sm font-medium text-violet-800 dark:text-violet-200">OREL Insider</p>
-          <p className="text-xs text-violet-600 dark:text-violet-400 mt-0.5">
+          <p className="text-sm font-semibold text-accent-soft-text">OREL Insider</p>
+          <p className="text-xs text-accent-soft-text/80 mt-0.5">
             Скачивай тестовые версии приложений раньше всех
           </p>
         </div>
@@ -60,22 +59,22 @@ export default function HomePage() {
           href="https://orel-insider.vercel.app"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs font-medium text-violet-700 dark:text-violet-300 border border-violet-300 dark:border-violet-700 rounded-xl px-3.5 py-2 hover:bg-violet-100 dark:hover:bg-violet-900 transition-colors shrink-0"
+          className="text-xs font-medium bg-surface text-accent-soft-text rounded-full px-4 py-2.5 hover:shadow-sm transition-shadow shrink-0"
         >
           Перейти →
         </a>
       </div>
 
-      {/* Фильтр по тегам (без документации) */}
+      {/* Фильтр по тегам */}
       <div className="flex gap-2 mb-6 flex-wrap">
         {tags.map(tag => (
           <button
             key={tag.value}
             onClick={() => setActiveTag(tag.value)}
-            className={`text-xs px-3.5 py-1.5 rounded-full border transition-colors cursor-pointer ${
+            className={`text-xs px-4 py-2 rounded-full transition-colors cursor-pointer font-medium ${
               activeTag === tag.value
-                ? 'bg-violet-600 text-white border-violet-600'
-                : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-violet-300'
+                ? 'bg-text-primary text-page'
+                : 'bg-surface-soft text-text-secondary hover:text-text-primary'
             }`}
           >
             {tag.label}
@@ -87,27 +86,27 @@ export default function HomePage() {
       {loading && (
         <div className="grid gap-4 sm:grid-cols-2">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="bg-gray-100 dark:bg-gray-800 rounded-2xl h-44 animate-pulse" />
+            <div key={i} className="bg-surface-soft rounded-3xl h-44 animate-pulse" />
           ))}
         </div>
       )}
 
       {error && (
         <div className="text-center py-16">
-          <p className="text-sm text-red-500">{error}</p>
+          <p className="text-sm text-rose-500">{error}</p>
         </div>
       )}
 
       {!loading && !error && filtered.length === 0 && (
         <div className="text-center py-16">
-          <p className="text-sm text-gray-400">Статей пока нет</p>
+          <p className="text-sm text-text-muted">Статей пока нет</p>
         </div>
       )}
 
       {!loading && !error && filtered.length > 0 && (
         <div className="grid gap-4 sm:grid-cols-2">
-          {filtered.map(post => (
-            <PostCard key={post._id} post={post} />
+          {filtered.map((post, i) => (
+            <PostCard key={post._id} post={post} featured={i === 0} />
           ))}
         </div>
       )}

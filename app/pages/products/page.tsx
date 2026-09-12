@@ -48,10 +48,10 @@ export default function ProductsPage() {
 
 			{/* Заголовок */}
 			<div className="mb-8">
-				<h1 className="text-2xl font-medium text-gray-900 dark:text-white mb-1">
+				<h1 className="text-2xl font-medium text-text-primary mb-1">
 					Продукты
 				</h1>
-				<p className="text-sm text-gray-500 dark:text-gray-400">
+				<p className="text-sm text-text-secondary">
 					Все официальные продукты OREL в одном месте
 				</p>
 			</div>
@@ -64,16 +64,16 @@ export default function ProductsPage() {
 						href={product.url}
 						target="_blank"
 						rel="noopener noreferrer"
-						className={`group bg-white dark:bg-gray-900 border rounded-2xl p-5 flex flex-col gap-3 hover:shadow-sm transition-all ${
+						className={`group bg-surface border rounded-2xl p-5 flex flex-col gap-3 hover:shadow-sm transition-all ${
 							product.highlight
 								? 'border-green-300 dark:border-green-700'
-								: 'border-gray-200 dark:border-gray-700 hover:border-violet-300 dark:hover:border-violet-700'
+								: 'border-border-soft hover:border-violet-300 dark:hover:border-violet-700'
 						}`}
 					>
 						{/* Иконка + тег */}
 						<div className="flex items-center justify-between">
-							<div className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-								<FiPackage size={16} className="text-gray-500 dark:text-gray-400" />
+							<div className="w-9 h-9 rounded-xl bg-surface-soft flex items-center justify-center">
+								<FiPackage size={16} className="text-text-secondary" />
 							</div>
 							<span className={`text-xs font-medium px-2.5 py-1 rounded-full ${product.tagColor}`}>
 								{product.tag}
@@ -83,7 +83,7 @@ export default function ProductsPage() {
 						{/* Название */}
 						<div>
 							<div className="flex items-center gap-1.5">
-								<h2 className="text-sm font-medium text-gray-900 dark:text-white">
+								<h2 className="text-sm font-medium text-text-primary">
 									{product.name}
 								</h2>
 								<FiArrowUpRight
@@ -91,13 +91,13 @@ export default function ProductsPage() {
 									className="text-gray-400 group-hover:text-violet-500 transition-colors"
 								/>
 							</div>
-							<p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+							<p className="text-xs text-text-secondary mt-1 leading-relaxed">
 								{product.description}
 							</p>
 						</div>
 
 						{/* Ссылка */}
-						<p className="text-xs text-gray-400 dark:text-gray-500 truncate mt-auto">
+						<p className="text-xs text-text-muted truncate mt-auto">
 							{product.url.replace('https://', '')}
 						</p>
 					</a>

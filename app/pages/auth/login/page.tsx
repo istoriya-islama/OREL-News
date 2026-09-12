@@ -36,13 +36,13 @@ export default function LoginPage() {
 			<div className='w-full max-w-md'>
 				{/* Лого */}
 				<div className='text-center mb-8'>
-					<h1 className='text-2xl font-medium text-gray-900 dark:text-white'>
+					<h1 className='text-2xl font-medium text-text-primary'>
 						OREL <span className='text-violet-600'>ID</span>
 					</h1>
 					<p className='text-sm text-gray-500 mt-1'>Войди в свой аккаунт</p>
 				</div>
 
-				<div className='bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-8'>
+				<div className='bg-surface rounded-2xl border border-border-soft p-8'>
 					{/* Баннер про Insider */}
 					<div className='bg-violet-50 dark:bg-violet-950 border border-violet-200 dark:border-violet-800 rounded-xl px-4 py-3 mb-6'>
 						<p className='text-xs text-violet-700 dark:text-violet-300 leading-relaxed'>
@@ -64,12 +64,12 @@ export default function LoginPage() {
 
 						<div>
 							<div className='flex justify-between items-center mb-1.5'>
-								<label className='text-sm text-gray-600 dark:text-gray-400'>
+								<label className='text-sm text-text-secondary'>
 									Пароль
 								</label>
 								{/*<Link
 									href='https://orel-id.istoriyaislama.workers.dev/pages/auth/forgot-password'
-									className='text-xs text-violet-600 hover:underline'
+									className='text-xs text-accent hover:underline'
 								>
 									Забыл пароль?
 								</Link>*/}
@@ -100,7 +100,7 @@ export default function LoginPage() {
 						Нет аккаунта?{' '}
 						<Link
 							href='/pages/auth'
-							className='text-violet-600 hover:underline font-medium'
+							className='text-accent hover:underline font-medium'
 						>
 							Зарегистрироваться
 						</Link>

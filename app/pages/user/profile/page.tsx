@@ -108,27 +108,27 @@ export default function ProfilePage() {
 		<div className='max-w-lg mx-auto'>
 			{/* Заголовок */}
 			<div className='mb-8'>
-				<h1 className='text-xl font-medium text-gray-900 dark:text-white'>
+				<h1 className='text-xl font-medium text-text-primary'>
 					Профиль
 				</h1>
-				<p className='text-sm text-gray-500 dark:text-gray-400 mt-1'>
+				<p className='text-sm text-text-secondary mt-1'>
 					OREL ID — управление аккаунтом
 				</p>
 			</div>
 
 			{/* Аватар */}
-			<div className='flex items-center gap-4 mb-8 p-5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl'>
-				<div className='w-14 h-14 rounded-full bg-violet-100 dark:bg-violet-900 flex items-center justify-center text-violet-600 dark:text-violet-300 text-xl font-medium shrink-0'>
+			<div className='flex items-center gap-4 mb-8 p-5 bg-surface border border-border-soft rounded-2xl'>
+				<div className='w-14 h-14 rounded-full bg-accent-soft-bg flex items-center justify-center text-accent-soft-text text-xl font-medium shrink-0'>
 					{user.name.charAt(0).toUpperCase()}
 				</div>
 				<div>
-					<p className='font-medium text-gray-900 dark:text-white'>
+					<p className='font-medium text-text-primary'>
 						{user.name}
 					</p>
-					<p className='text-sm text-gray-500 dark:text-gray-400'>
+					<p className='text-sm text-text-secondary'>
 						{user.email}
 					</p>
-					<p className='text-xs text-gray-400 dark:text-gray-500 mt-0.5'>
+					<p className='text-xs text-text-muted mt-0.5'>
 						Аккаунт создан{' '}
 						{new Date(user.createdAt).toLocaleDateString('ru-RU', {
 							day: 'numeric',
@@ -140,13 +140,13 @@ export default function ProfilePage() {
 			</div>
 
 			{/* OREL ID */}
-			<div className='bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-5 mb-4'>
+			<div className='bg-surface border border-border-soft rounded-2xl p-5 mb-4'>
 				<div className='flex items-center justify-between'>
 					<div>
-						<h2 className='text-sm font-medium text-gray-900 dark:text-white'>
+						<h2 className='text-sm font-medium text-text-primary'>
 							OREL ID
 						</h2>
-						<p className='text-xs text-gray-400 dark:text-gray-500 mt-0.5'>
+						<p className='text-xs text-text-muted mt-0.5'>
 							Управление аккаунтом, сессии, безопасность
 						</p>
 					</div>
@@ -154,7 +154,7 @@ export default function ProfilePage() {
 						href='https://orel-id.istoriyaislama.workers.dev/pages/user/profile'
 						target='_blank'
 						rel='noopener noreferrer'
-						className='text-xs px-4 py-2 rounded-lg border border-violet-300 dark:border-violet-700 text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/30 transition-colors whitespace-nowrap'
+						className='text-xs px-4 py-2 rounded-lg border border-accent/40 text-accent hover:bg-violet-50 dark:hover:bg-violet-900/30 transition-colors whitespace-nowrap'
 					>
 						Открыть →
 					</a>
@@ -162,8 +162,8 @@ export default function ProfilePage() {
 			</div>
 
 			{/* Изменить имя */}
-			<div className='bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-5 mb-4'>
-				<h2 className='text-sm font-medium text-gray-900 dark:text-white mb-4 flex items-center gap-2'>
+			<div className='bg-surface border border-border-soft rounded-2xl p-5 mb-4'>
+				<h2 className='text-sm font-medium text-text-primary mb-4 flex items-center gap-2'>
 					<FiUser size={15} className='text-violet-500' />
 					Изменить имя
 				</h2>
@@ -187,8 +187,8 @@ export default function ProfilePage() {
 			</div>
 
 			{/* Изменить пароль */}
-			<div className='bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-5 mb-4'>
-				<h2 className='text-sm font-medium text-gray-900 dark:text-white mb-4 flex items-center gap-2'>
+			<div className='bg-surface border border-border-soft rounded-2xl p-5 mb-4'>
+				<h2 className='text-sm font-medium text-text-primary mb-4 flex items-center gap-2'>
 					<FiKey size={15} className='text-violet-500' />
 					Изменить пароль
 				</h2>
@@ -222,12 +222,12 @@ export default function ProfilePage() {
 			</div>
 
 			{/* Выйти */}
-			<div className='bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-5 mb-4'>
-				<h2 className='text-sm font-medium text-gray-900 dark:text-white mb-1 flex items-center gap-2'>
+			<div className='bg-surface border border-border-soft rounded-2xl p-5 mb-4'>
+				<h2 className='text-sm font-medium text-text-primary mb-1 flex items-center gap-2'>
 					<FiLogOut size={15} className='text-gray-400' />
 					Выйти из аккаунта
 				</h2>
-				<p className='text-xs text-gray-400 dark:text-gray-500 mb-4'>
+				<p className='text-xs text-text-muted mb-4'>
 					Выход на этом устройстве
 				</p>
 				<Button variant='secondary' onClick={() => void logout()}>
@@ -236,12 +236,12 @@ export default function ProfilePage() {
 			</div>
 
 			{/* Удалить аккаунт */}
-			<div className='bg-white dark:bg-gray-900 border border-red-200 dark:border-red-900 rounded-2xl p-5'>
+			<div className='bg-surface border border-red-200 dark:border-red-900 rounded-2xl p-5'>
 				<h2 className='text-sm font-medium text-red-600 dark:text-red-400 mb-1 flex items-center gap-2'>
 					<FiTrash2 size={15} />
 					Удалить аккаунт
 				</h2>
-				<p className='text-xs text-gray-400 dark:text-gray-500 mb-4'>
+				<p className='text-xs text-text-muted mb-4'>
 					Это действие необратимо. Все данные будут удалены.
 				</p>
 

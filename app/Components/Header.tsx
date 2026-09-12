@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { FiMenu, FiX } from 'react-icons/fi'
 import { useAuth } from '@/app/store/auth'
 
@@ -19,29 +19,32 @@ export default function Header() {
   const [burgerOpen, setBurgerOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
-      <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
+    <header className="sticky top-0 z-50 bg-page/85 backdrop-blur-sm border-b border-border-soft">
+      <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
 
         {/* Лого */}
-        <Link href="/" className="text-base font-medium text-gray-900 dark:text-white shrink-0">
-          OREL <span className="text-violet-600">News</span>
+        <Link href="/" className="font-serif text-lg font-semibold text-text-primary shrink-0">
+          OREL <span className="text-accent">News</span>
         </Link>
 
         {/* Навигация — только на десктопе */}
-        <nav className="hidden sm:flex items-center gap-5">
-          {navLinks.map(link => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`text-sm transition-colors ${
-                pathname === link.href || (link.href === '/pages/docs' && pathname.startsWith('/pages/docs'))
-                  ? 'text-gray-900 dark:text-white font-medium'
-                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
+        <nav className="hidden sm:flex items-center gap-1">
+          {navLinks.map(link => {
+            const active = pathname === link.href || (link.href === '/pages/docs' && pathname.startsWith('/pages/docs'))
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`text-sm px-3.5 py-2 rounded-full transition-colors ${
+                  active
+                    ? 'bg-accent-soft-bg text-accent-soft-text font-medium'
+                    : 'text-text-secondary hover:text-text-primary'
+                }`}
+              >
+                {link.label}
+              </Link>
+            )
+          })}
         </nav>
 
         {/* Правая часть */}
@@ -50,7 +53,7 @@ export default function Header() {
           {/* Поддержка — только десктоп */}
           <Link
             href="https://t.me/obr_orel_bot"
-            className="hidden sm:block text-xs text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 transition-colors"
+            className="hidden sm:block text-xs text-text-secondary hover:text-text-primary border border-border-soft rounded-full px-3.5 py-2 transition-colors"
           >
             Поддержка
           </Link>
@@ -60,27 +63,27 @@ export default function Header() {
             <div className="relative">
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="w-8 h-8 rounded-full bg-violet-100 dark:bg-violet-900 flex items-center justify-center text-violet-600 dark:text-violet-300 text-xs font-medium"
+                className="w-9 h-9 rounded-full bg-accent-soft-bg flex items-center justify-center text-accent-soft-text text-xs font-medium"
               >
                 {user.name.charAt(0).toUpperCase()}
               </button>
 
               {menuOpen && (
-                <div className="absolute right-0 top-10 w-44 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm py-1 z-50">
-                  <div className="px-3 py-2 border-b border-gray-100 dark:border-gray-800">
-                    <p className="text-xs font-medium text-gray-900 dark:text-white truncate">{user.name}</p>
-                    <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                <div className="absolute right-0 top-11 w-48 bg-surface border border-border-soft rounded-2xl shadow-sm py-1.5 z-50">
+                  <div className="px-3.5 py-2.5 border-b border-border-soft">
+                    <p className="text-xs font-medium text-text-primary truncate">{user.name}</p>
+                    <p className="text-xs text-text-muted truncate">{user.email}</p>
                   </div>
                   <Link
                     href="/pages/user/profile"
                     onClick={() => setMenuOpen(false)}
-                    className="block px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                    className="block px-3.5 py-2 text-sm text-text-secondary hover:bg-surface-soft rounded-lg mx-1.5 mt-1"
                   >
                     Профиль
                   </Link>
                   <button
                     onClick={() => { setMenuOpen(false); void logout() }}
-                    className="w-full text-left px-3 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    className="w-full text-left px-3.5 py-2 text-sm text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg mx-1.5"
                   >
                     Выйти
                   </button>
@@ -90,7 +93,7 @@ export default function Header() {
           ) : (
             <Link
               href="/pages/auth/login"
-              className="text-sm bg-violet-600 hover:bg-violet-700 text-white px-3.5 py-1.5 rounded-xl transition-colors"
+              className="text-sm bg-accent hover:bg-accent-hover text-white px-4 py-2 rounded-full transition-colors font-medium"
             >
               Войти
             </Link>
@@ -99,7 +102,7 @@ export default function Header() {
           {/* Бургер — только мобиле */}
           <button
             onClick={() => setBurgerOpen(!burgerOpen)}
-            className="sm:hidden w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400"
+            className="sm:hidden w-9 h-9 flex items-center justify-center rounded-full border border-border-soft text-text-secondary"
           >
             {burgerOpen ? <FiX size={16} /> : <FiMenu size={16} />}
           </button>
@@ -108,16 +111,16 @@ export default function Header() {
 
       {/* Мобильное меню */}
       {burgerOpen && (
-        <div className="sm:hidden border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3 flex flex-col gap-1">
+        <div className="sm:hidden border-t border-border-soft bg-page px-4 py-3 flex flex-col gap-1">
           {navLinks.map(link => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setBurgerOpen(false)}
-              className={`text-sm py-2 px-3 rounded-xl transition-colors ${
+              className={`text-sm py-2.5 px-3.5 rounded-2xl transition-colors ${
                 pathname === link.href
-                  ? 'bg-violet-50 dark:bg-violet-950 text-violet-600 dark:text-violet-300 font-medium'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+                  ? 'bg-accent-soft-bg text-accent-soft-text font-medium'
+                  : 'text-text-secondary hover:bg-surface-soft'
               }`}
             >
               {link.label}
@@ -126,7 +129,7 @@ export default function Header() {
           <Link
             href="https://t.me/obr_orel_bot"
             onClick={() => setBurgerOpen(false)}
-            className="text-sm py-2 px-3 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            className="text-sm py-2.5 px-3.5 rounded-2xl text-text-secondary hover:bg-surface-soft transition-colors"
           >
             Поддержка
           </Link>

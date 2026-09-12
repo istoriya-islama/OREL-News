@@ -6,12 +6,8 @@ import { useEffect, useState } from 'react'
 import { FiBook, FiChevronDown, FiChevronRight, FiPlus, FiTrash2 } from 'react-icons/fi'
 import { useAuth } from '@/app/store/auth'
 
-// ── Категории хранятся в localStorage ────────────────────────────────────────
-// Структура: { [categoryName]: string[] } — массив _id постов в этой категории
-// Порядок категорий: массив строк в localStorage key 'docs-category-order'
-
-const LS_CATS = 'docs-categories'      // { [name]: string[] }
-const LS_ORDER = 'docs-category-order' // string[]
+const LS_CATS = 'docs-categories'
+const LS_ORDER = 'docs-category-order'
 
 function loadCats(): Record<string, string[]> {
   try { return JSON.parse(localStorage.getItem(LS_CATS) || '{}') } catch { return {} }
@@ -31,12 +27,10 @@ export default function DocsPage() {
   const [docs, setDocs] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Категории
   const [cats, setCats] = useState<Record<string, string[]>>({})
   const [order, setOrder] = useState<string[]>([])
   const [openCats, setOpenCats] = useState<Record<string, boolean>>({})
 
-  // Новая категория (только для админа)
   const [newCatName, setNewCatName] = useState('')
   const [addingCat, setAddingCat] = useState(false)
 
@@ -44,7 +38,6 @@ export default function DocsPage() {
     const load = async () => {
       try {
         const all = await api.getPosts()
-        // Только доки, отсортированные от старых к новым (старые = начало доков = сверху)
         const sorted = all
           .filter(p => p.tag === 'documentation')
           .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
@@ -58,17 +51,14 @@ export default function DocsPage() {
     const o = loadOrder()
     setCats(c)
     setOrder(o)
-    // Открываем все категории по умолчанию
     const open: Record<string, boolean> = {}
     o.forEach(name => { open[name] = true })
     setOpenCats(open)
   }, [])
 
-  // Доки без категории
   const assignedIds = new Set(Object.values(cats).flat())
   const uncategorized = docs.filter(d => !assignedIds.has(d._id))
 
-  // Добавить категорию
   const handleAddCat = () => {
     const name = newCatName.trim()
     if (!name || order.includes(name)) return
@@ -82,7 +72,6 @@ export default function DocsPage() {
     setAddingCat(false)
   }
 
-  // Удалить категорию
   const handleDeleteCat = (name: string) => {
     const { [name]: _, ...rest } = cats
     const newOrder = order.filter(n => n !== name)
@@ -91,14 +80,11 @@ export default function DocsPage() {
     saveCats(rest, newOrder)
   }
 
-  // Переместить doc в категорию (или убрать)
   const handleAssign = (docId: string, catName: string) => {
-    // Убираем из всех категорий
     const newCats: Record<string, string[]> = {}
     for (const [k, v] of Object.entries(cats)) {
       newCats[k] = v.filter(id => id !== docId)
     }
-    // Добавляем в нужную (если не 'none')
     if (catName !== 'none') {
       newCats[catName] = [...(newCats[catName] || []), docId]
     }
@@ -115,21 +101,23 @@ export default function DocsPage() {
   const DocItem = ({ doc }: { doc: Post }) => (
     <Link
       href={`/pages/posts/${doc._id}`}
-      className="group flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors"
+      className="group flex items-start gap-3 px-3.5 py-3 rounded-2xl hover:bg-surface-soft transition-colors"
     >
-      <FiBook size={14} className="text-gray-400 dark:text-gray-500 mt-0.5 shrink-0 group-hover:text-violet-500 transition-colors" />
+      <div className="w-8 h-8 rounded-full bg-accent-soft-bg flex items-center justify-center shrink-0 mt-0.5">
+        <FiBook size={13} className="text-accent-soft-text" />
+      </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm text-gray-800 dark:text-gray-200 truncate group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors">
+        <p className="text-sm text-text-primary truncate font-medium group-hover:text-accent transition-colors">
           {doc.title}
         </p>
-        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{formatDate(doc.createdAt)}</p>
+        <p className="text-xs text-text-muted mt-0.5">{formatDate(doc.createdAt)}</p>
       </div>
       {isAdmin && (
         <select
           value={order.find(cat => cats[cat]?.includes(doc._id)) || 'none'}
           onChange={e => { e.preventDefault(); handleAssign(doc._id, e.target.value) }}
           onClick={e => e.preventDefault()}
-          className="text-xs border border-gray-200 dark:border-gray-700 rounded-lg px-1.5 py-1 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 outline-none shrink-0"
+          className="text-xs border border-border-soft rounded-lg px-1.5 py-1 bg-surface text-text-secondary outline-none shrink-0"
         >
           <option value="none">Без категории</option>
           {order.map(cat => (
@@ -142,18 +130,18 @@ export default function DocsPage() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      {/* Шапка */}
-      <div className="mb-8 flex items-end justify-between">
+      {/* Editorial-шапка */}
+      <div className="bg-surface-soft rounded-[28px] px-8 py-10 mb-8 flex items-end justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-medium text-gray-900 dark:text-white mb-1">
+          <div className="text-xs font-medium text-accent mb-3">Справочник OREL</div>
+          <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-text-primary mb-2">
             Документация
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-text-secondary max-w-md">
             Руководства, справочники и технические материалы OREL
           </p>
         </div>
 
-        {/* Добавить категорию — только для админа */}
         {isAdmin && (
           <div className="flex items-center gap-2">
             {addingCat ? (
@@ -164,17 +152,17 @@ export default function DocsPage() {
                   onChange={e => setNewCatName(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter') handleAddCat(); if (e.key === 'Escape') setAddingCat(false) }}
                   placeholder="Название категории"
-                  className="text-xs border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white outline-none focus:border-violet-400 w-44"
+                  className="text-xs border border-border-soft rounded-full px-3.5 py-2 bg-surface text-text-primary outline-none focus:border-accent w-44"
                 />
                 <button
                   onClick={handleAddCat}
-                  className="text-xs bg-violet-600 hover:bg-violet-700 text-white px-3 py-1.5 rounded-lg transition-colors"
+                  className="text-xs bg-accent hover:bg-accent-hover text-white px-3.5 py-2 rounded-full transition-colors"
                 >
                   Добавить
                 </button>
                 <button
                   onClick={() => setAddingCat(false)}
-                  className="text-xs text-gray-400 hover:text-gray-600 px-2 py-1.5"
+                  className="text-xs text-text-muted hover:text-text-secondary px-2 py-2"
                 >
                   Отмена
                 </button>
@@ -182,7 +170,7 @@ export default function DocsPage() {
             ) : (
               <button
                 onClick={() => setAddingCat(true)}
-                className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 transition-colors"
+                className="flex items-center gap-1.5 text-xs text-text-secondary hover:text-accent bg-surface rounded-full px-3.5 py-2.5 transition-colors"
               >
                 <FiPlus size={12} /> Категория
               </button>
@@ -194,44 +182,43 @@ export default function DocsPage() {
       {loading && (
         <div className="space-y-3">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-14 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse" />
+            <div key={i} className="h-16 bg-surface-soft rounded-2xl animate-pulse" />
           ))}
         </div>
       )}
 
       {!loading && docs.length === 0 && (
         <div className="text-center py-20">
-          <p className="text-sm text-gray-400">Документации пока нет</p>
+          <p className="text-sm text-text-muted">Документации пока нет</p>
         </div>
       )}
 
       {!loading && docs.length > 0 && (
-        <div className="space-y-6">
+        <div className="space-y-4">
 
-          {/* Категории */}
           {order.map(catName => {
             const catDocs = (cats[catName] || [])
               .map(id => docs.find(d => d._id === id))
               .filter(Boolean) as Post[]
 
             return (
-              <div key={catName} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden">
+              <div key={catName} className="bg-surface rounded-3xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
                 <button
                   onClick={() => toggleCat(catName)}
-                  className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                  className="w-full flex items-center justify-between px-5 py-4 hover:bg-surface-soft transition-colors"
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2.5">
                     {openCats[catName]
-                      ? <FiChevronDown size={14} className="text-gray-400" />
-                      : <FiChevronRight size={14} className="text-gray-400" />
+                      ? <FiChevronDown size={14} className="text-text-muted" />
+                      : <FiChevronRight size={14} className="text-text-muted" />
                     }
-                    <span className="text-sm font-medium text-gray-800 dark:text-gray-200">{catName}</span>
-                    <span className="text-xs text-gray-400 dark:text-gray-500">({catDocs.length})</span>
+                    <span className="text-sm font-semibold text-text-primary">{catName}</span>
+                    <span className="text-xs text-text-muted bg-surface-soft px-2 py-0.5 rounded-full">{catDocs.length}</span>
                   </div>
                   {isAdmin && (
                     <button
                       onClick={e => { e.stopPropagation(); handleDeleteCat(catName) }}
-                      className="p-1 text-gray-300 dark:text-gray-600 hover:text-red-500 transition-colors"
+                      className="p-1.5 text-text-muted hover:text-rose-500 transition-colors"
                     >
                       <FiTrash2 size={12} />
                     </button>
@@ -239,9 +226,9 @@ export default function DocsPage() {
                 </button>
 
                 {openCats[catName] && (
-                  <div className="px-2 pb-2">
+                  <div className="px-3 pb-3">
                     {catDocs.length === 0
-                      ? <p className="text-xs text-gray-400 dark:text-gray-500 px-3 py-2">Пусто — добавь статьи через селект справа</p>
+                      ? <p className="text-xs text-text-muted px-3.5 py-2">Пусто — добавь статьи через селект справа</p>
                       : catDocs.map(doc => <DocItem key={doc._id} doc={doc} />)
                     }
                   </div>
@@ -250,14 +237,13 @@ export default function DocsPage() {
             )
           })}
 
-          {/* Без категории */}
           {uncategorized.length > 0 && (
-            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden">
-              <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100 dark:border-gray-800">
-                <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Без категории</span>
-                <span className="text-xs text-gray-400 dark:text-gray-500">({uncategorized.length})</span>
+            <div className="bg-surface rounded-3xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+              <div className="flex items-center gap-2.5 px-5 py-4 border-b border-border-soft">
+                <span className="text-sm font-semibold text-text-secondary">Без категории</span>
+                <span className="text-xs text-text-muted bg-surface-soft px-2 py-0.5 rounded-full">{uncategorized.length}</span>
               </div>
-              <div className="px-2 py-2">
+              <div className="px-3 py-3">
                 {uncategorized.map(doc => <DocItem key={doc._id} doc={doc} />)}
               </div>
             </div>

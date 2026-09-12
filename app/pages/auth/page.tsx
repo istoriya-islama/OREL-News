@@ -47,13 +47,13 @@ export default function AuthPage() {
 			<div className='w-full max-w-md'>
 				{/* Лого */}
 				<div className='text-center mb-8'>
-					<h1 className='text-2xl font-medium text-gray-900 dark:text-white'>
+					<h1 className='text-2xl font-medium text-text-primary'>
 						OREL <span className='text-violet-600'>ID</span>
 					</h1>
 					<p className='text-sm text-gray-500 mt-1'>Создай свой аккаунт</p>
 				</div>
 
-				<div className='bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-8'>
+				<div className='bg-surface rounded-2xl border border-border-soft p-8'>
 					{/* Баннер про Insider */}
 					<div className='bg-violet-50 dark:bg-violet-950 border border-violet-200 dark:border-violet-800 rounded-xl px-4 py-3 mb-6'>
 						<p className='text-xs text-violet-700 dark:text-violet-300 leading-relaxed'>
@@ -107,7 +107,7 @@ export default function AuthPage() {
 						Уже есть аккаунт?{' '}
 						<Link
 							href='/pages/auth/login'
-							className='text-violet-600 hover:underline font-medium'
+							className='text-accent hover:underline font-medium'
 						>
 							Войти
 						</Link>

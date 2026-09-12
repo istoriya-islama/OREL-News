@@ -1,9 +1,10 @@
 'use client'
 
 import { Post } from '@/app/lib/api'
-import { DocHeading } from '@/app/lib/orelMarkdown'
+import { DocHeading } from '@/app/lib/markdown'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
+import { FiBook } from 'react-icons/fi'
 
 interface DocLayoutProps {
 	post: Post
@@ -21,7 +22,6 @@ export default function DocLayout({
 	const [activeId, setActiveId] = useState<string>('')
 	const observerRef = useRef<IntersectionObserver | null>(null)
 
-	// Следим за активным заголовком через IntersectionObserver
 	useEffect(() => {
 		if (!headings.length) return
 
@@ -55,12 +55,11 @@ export default function DocLayout({
 	}
 
 	return (
-		<div className='max-w-5xl mx-auto flex gap-8 relative'>
+		<div className='max-w-5xl mx-auto flex gap-10 relative'>
 			{/* ── Сайдбар ───────────────────────────────────────────────────────── */}
-			<aside className='hidden lg:flex flex-col gap-6 w-56 shrink-0 sticky top-20 self-start max-h-[calc(100vh-6rem)] overflow-y-auto pb-8'>
-				{/* Все доки */}
+			<aside className='hidden lg:flex flex-col gap-7 w-60 shrink-0 sticky top-24 self-start max-h-[calc(100vh-7rem)] overflow-y-auto pb-8'>
 				<div>
-					<p className='text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1'>
+					<p className='text-xs font-semibold text-text-muted uppercase tracking-widest mb-2.5 px-1'>
 						Документация
 					</p>
 					<nav className='flex flex-col gap-0.5'>
@@ -68,22 +67,22 @@ export default function DocLayout({
 							<Link
 								key={doc._id}
 								href={`/pages/posts/${doc._id}`}
-								className={`text-sm px-2.5 py-1.5 rounded-lg transition-colors truncate ${
+								className={`flex items-center gap-2 text-sm px-3 py-2 rounded-xl transition-colors truncate ${
 									doc._id === post._id
-										? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white font-medium'
-										: 'text-gray-500 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/50'
+										? 'bg-accent-soft-bg text-accent-soft-text font-medium'
+										: 'text-text-secondary hover:bg-surface-soft hover:text-text-primary'
 								}`}
 							>
-								{doc.title}
+								<FiBook size={13} className="shrink-0 opacity-60" />
+								<span className="truncate">{doc.title}</span>
 							</Link>
 						))}
 					</nav>
 				</div>
 
-				{/* Якоря текущей страницы */}
 				{headings.length > 0 && (
-					<div>
-						<p className='text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-2 px-1'>
+					<div className="border-t border-border-soft pt-5">
+						<p className='text-xs font-semibold text-text-muted uppercase tracking-widest mb-2.5 px-1'>
 							На этой странице
 						</p>
 						<nav className='flex flex-col gap-0.5'>
@@ -91,12 +90,12 @@ export default function DocLayout({
 								<button
 									key={h.id}
 									onClick={() => scrollTo(h.id)}
-									className={`text-left text-sm py-1 transition-colors truncate ${
-										h.level === 1 ? 'px-2.5' : h.level === 2 ? 'px-4' : 'px-6'
+									className={`text-left text-sm py-1.5 rounded-lg transition-colors truncate ${
+										h.level === 1 ? 'px-3' : h.level === 2 ? 'pl-6 pr-3' : 'pl-9 pr-3'
 									} ${
 										activeId === h.id
-											? 'text-violet-600 dark:text-violet-400 font-medium'
-											: 'text-gray-400 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white'
+											? 'text-accent font-medium bg-accent-soft-bg'
+											: 'text-text-muted hover:text-text-primary'
 									}`}
 								>
 									{h.text}
@@ -108,7 +107,7 @@ export default function DocLayout({
 			</aside>
 
 			{/* ── Контент ────────────────────────────────────────────────────────── */}
-			<main className='flex-1 min-w-0'>{children}</main>
+			<main className='flex-1 min-w-0 bg-surface rounded-3xl px-6 py-8 sm:px-10 sm:py-10'>{children}</main>
 		</div>
 	)
 }

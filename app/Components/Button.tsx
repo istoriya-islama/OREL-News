@@ -16,13 +16,13 @@ export default function Button({
 	...props
 }: ButtonProps) {
 	const base =
-		'text-sm font-medium py-2.5 px-4 rounded-xl transition-colors disabled:opacity-60 cursor-pointer'
+		'text-sm font-medium py-2.5 px-5 rounded-full transition-colors disabled:opacity-60 cursor-pointer'
 
 	const variants = {
-		primary: 'bg-violet-600 hover:bg-violet-700 text-white',
+		primary: 'bg-accent hover:bg-accent-hover text-white',
 		secondary:
-			'bg-transparent border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800',
-		danger: 'bg-red-50 hover:bg-red-100 text-red-600 border border-red-200',
+			'bg-transparent border border-border-soft text-text-secondary hover:bg-surface-soft hover:text-text-primary',
+		danger: 'bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 dark:bg-rose-950/40 dark:hover:bg-rose-950/60 dark:text-rose-300 dark:border-rose-900',
 	}
 
 	return (

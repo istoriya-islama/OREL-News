@@ -1,26 +1,74 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --page-bg: #fdfcfb;
+  --surface: #ffffff;
+  --surface-soft: #f7f4ff;
+  --text-primary: #18181b;
+  --text-secondary: #6b6b75;
+  --text-muted: #a1a1ab;
+  --border-soft: #ececf0;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --accent: #7c3aed;
+  --accent-hover: #6d28d9;
+  --accent-soft-bg: #f2edff;
+  --accent-soft-text: #6423c9;
+
+  --tag-web-bg: #e8f1ff;   --tag-web-text: #1d54c9;
+  --tag-ai-bg: #ffe9f5;    --tag-ai-text: #c22a7d;
+  --tag-mobile-bg: #e6f8ef; --tag-mobile-text: #158a55;
+  --tag-os-bg: #fff4e0;    --tag-os-text: #b6650a;
+  --tag-doc-bg: #eeeef2;   --tag-doc-text: #55555f;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --page-bg: #121014;
+    --surface: #1a1820;
+    --surface-soft: #211c33;
+    --text-primary: #f2f1f5;
+    --text-secondary: #a6a3b0;
+    --text-muted: #726f7c;
+    --border-soft: #2c2833;
+
+    --accent: #a683fa;
+    --accent-hover: #b99cfb;
+    --accent-soft-bg: #2a2140;
+    --accent-soft-text: #cbb6fd;
+
+    --tag-web-bg: #16233f;   --tag-web-text: #7cabff;
+    --tag-ai-bg: #3a1730;    --tag-ai-text: #ff8fc9;
+    --tag-mobile-bg: #133226; --tag-mobile-text: #6fe0aa;
+    --tag-os-bg: #382608;   --tag-os-text: #ffbb5c;
+    --tag-doc-bg: #232028;  --tag-doc-text: #b3b0bb;
   }
 }
 
+@theme inline {
+  --color-page: var(--page-bg);
+  --color-surface: var(--surface);
+  --color-surface-soft: var(--surface-soft);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-border-soft: var(--border-soft);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft-bg: var(--accent-soft-bg);
+  --color-accent-soft-text: var(--accent-soft-text);
+  --font-sans: var(--font-sans-base);
+  --font-serif: var(--font-serif-base);
+  --font-mono: var(--font-mono-base);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--page-bg);
+  color: var(--text-primary);
+  font-family: var(--font-sans-base), -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+::selection {
+  background: var(--accent-soft-bg);
+  color: var(--accent-soft-text);
 }

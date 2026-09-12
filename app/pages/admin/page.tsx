@@ -2,6 +2,7 @@
 
 import Button from '@/app/Components/Button'
 import Input from '@/app/Components/Input'
+import MarkdownContent from '@/app/Components/MarkdownContent'
 import { api, Post, PostTag } from '@/app/lib/api'
 import { useAuth } from '@/app/store/auth'
 import { useRouter } from 'next/navigation'
@@ -16,6 +17,7 @@ import {
 } from 'react-icons/fi'
 
 type View = 'login' | 'list' | 'editor'
+type EditorTab = 'write' | 'preview'
 
 const tagOptions: { value: PostTag; label: string }[] = [
 	{ value: 'web', label: 'Веб' },
@@ -26,15 +28,13 @@ const tagOptions: { value: PostTag; label: string }[] = [
 ]
 
 const tagStyles: Record<string, string> = {
-	web: 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300',
-	ai: 'bg-violet-50 text-violet-700 dark:bg-violet-950 dark:text-violet-300',
-	mobile: 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300',
-	os: 'bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300',
-	documentation:
-		'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300',
+	web: 'bg-[var(--tag-web-bg)] text-[var(--tag-web-text)]',
+	ai: 'bg-[var(--tag-ai-bg)] text-[var(--tag-ai-text)]',
+	mobile: 'bg-[var(--tag-mobile-bg)] text-[var(--tag-mobile-text)]',
+	os: 'bg-[var(--tag-os-bg)] text-[var(--tag-os-text)]',
+	documentation: 'bg-[var(--tag-doc-bg)] text-[var(--tag-doc-text)]',
 }
 
-// ── localStorage helpers (те же ключи что и в DocsPage) ──────────────────────
 const LS_CATS = 'docs-categories'
 const LS_ORDER = 'docs-category-order'
 
@@ -62,17 +62,14 @@ export default function AdminPage() {
 	const { user, logout } = useAuth()
 	const [view, setView] = useState<View>('login')
 
-	// Логин
 	const [loginEmail, setLoginEmail] = useState('')
 	const [loginPassword, setLoginPassword] = useState('')
 	const [loginError, setLoginError] = useState('')
 	const [loginLoading, setLoginLoading] = useState(false)
 
-	// Список
 	const [posts, setPosts] = useState<Post[]>([])
 	const [postsLoading, setPostsLoading] = useState(false)
 
-	// Редактор
 	const [editingPost, setEditingPost] = useState<Post | null>(null)
 	const [title, setTitle] = useState('')
 	const [body, setBody] = useState('')
@@ -80,12 +77,11 @@ export default function AdminPage() {
 	const [saveLoading, setSaveLoading] = useState(false)
 	const [publishLoading, setPublishLoading] = useState(false)
 	const [editorError, setEditorError] = useState('')
+	const [editorTab, setEditorTab] = useState<EditorTab>('write')
 
-	// Категории (только для documentation)
 	const [docCats, setDocCats] = useState<Record<string, string[]>>({})
 	const [docOrder, setDocOrder] = useState<string[]>([])
 	const [selectedCat, setSelectedCat] = useState<string>('none')
-	// Новая категория прямо в редакторе
 	const [newCatName, setNewCatName] = useState('')
 	const [showNewCat, setShowNewCat] = useState(false)
 
@@ -96,7 +92,6 @@ export default function AdminPage() {
 		}
 	}, [user])
 
-	// Загружаем категории при открытии редактора
 	const loadCats = () => {
 		setDocCats(loadDocCats())
 		setDocOrder(loadDocOrder())
@@ -142,7 +137,6 @@ export default function AdminPage() {
 			setTitle(post.title)
 			setBody(post.body)
 			setTag(post.tag)
-			// Находим категорию поста
 			const cats = loadDocCats()
 			const order = loadDocOrder()
 			const cat = order.find(c => cats[c]?.includes(post._id)) || 'none'
@@ -157,10 +151,10 @@ export default function AdminPage() {
 		setEditorError('')
 		setNewCatName('')
 		setShowNewCat(false)
+		setEditorTab('write')
 		setView('editor')
 	}
 
-	// Добавить новую категорию прямо из редактора
 	const handleAddCat = () => {
 		const name = newCatName.trim()
 		if (!name || docOrder.includes(name)) return
@@ -174,16 +168,13 @@ export default function AdminPage() {
 		setShowNewCat(false)
 	}
 
-	// Назначить категорию посту
 	const assignCategory = (postId: string, catName: string) => {
 		const cats = loadDocCats()
 		const order = loadDocOrder()
-		// Убираем из всех категорий
 		const newCats: Record<string, string[]> = {}
 		for (const [k, v] of Object.entries(cats)) {
 			newCats[k] = v.filter(id => id !== postId)
 		}
-		// Добавляем в нужную
 		if (catName !== 'none' && newCats[catName] !== undefined) {
 			newCats[catName] = [...newCats[catName], postId]
 		}
@@ -256,7 +247,6 @@ export default function AdminPage() {
 		if (!confirm('Удалить статью?')) return
 		try {
 			await api.adminDeletePost(id)
-			// Убираем из категорий
 			const cats = loadDocCats()
 			const order = loadDocOrder()
 			const newCats: Record<string, string[]> = {}
@@ -274,18 +264,18 @@ export default function AdminPage() {
 			<div className='min-h-[80vh] flex items-center justify-center px-4'>
 				<div className='w-full max-w-sm'>
 					<div className='text-center mb-8'>
-						<h1 className='text-xl font-medium text-gray-900 dark:text-white'>
+						<h1 className='font-serif text-xl font-semibold text-text-primary'>
 							Панель управления
 						</h1>
-						<p className='text-sm text-gray-500 mt-1'>
+						<p className='text-sm text-text-secondary mt-1'>
 							Только для администратора
 						</p>
-						<p className='text-xs text-gray-400 mt-1'>
+						<p className='text-xs text-text-muted mt-1'>
 							orel-news.com
-							<span className='font-medium text-gray-500'>/admin</span>
+							<span className='font-medium text-text-secondary'>/admin</span>
 						</p>
 					</div>
-					<div className='bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-6'>
+					<div className='bg-surface rounded-3xl p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]'>
 						<form onSubmit={handleLogin} className='space-y-4'>
 							<Input
 								label='Email'
@@ -304,7 +294,7 @@ export default function AdminPage() {
 								required
 							/>
 							{loginError && (
-								<p className='text-xs text-red-500'>{loginError}</p>
+								<p className='text-xs text-rose-500'>{loginError}</p>
 							)}
 							<Button type='submit' fullWidth loading={loginLoading}>
 								Войти
@@ -313,7 +303,7 @@ export default function AdminPage() {
 					</div>
 					<button
 						onClick={() => router.push('/')}
-						className='text-xs text-gray-400 hover:text-gray-600 mt-4 mx-auto block transition-colors'
+						className='text-xs text-text-muted hover:text-text-secondary mt-4 mx-auto block transition-colors'
 					>
 						← На сайт
 					</button>
@@ -329,28 +319,27 @@ export default function AdminPage() {
 		return (
 			<div className='max-w-2xl mx-auto'>
 				<div className='flex items-center justify-between mb-6'>
-					<h1 className='text-lg font-medium text-gray-900 dark:text-white'>
+					<h1 className='font-serif text-lg font-semibold text-text-primary'>
 						{editingPost ? 'Редактировать статью' : 'Новая статья'}
 					</h1>
 					<button
 						onClick={() => setView('list')}
-						className='text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors'
+						className='text-sm text-text-muted hover:text-text-secondary transition-colors'
 					>
 						← Назад
 					</button>
 				</div>
 
-				<div className='bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl overflow-hidden'>
+				<div className='bg-surface rounded-3xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.04)]'>
 					{/* Тулбар */}
-					<div className='flex items-center gap-2 px-4 py-3 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800 flex-wrap'>
-						{/* Тег */}
+					<div className='flex items-center gap-2 px-4 py-3 border-b border-border-soft bg-surface-soft flex-wrap'>
 						<select
 							value={tag}
 							onChange={e => {
 								setTag(e.target.value as PostTag)
 								setSelectedCat('none')
 							}}
-							className='text-xs border border-gray-200 dark:border-gray-700 rounded-lg px-2.5 py-1.5 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 outline-none'
+							className='text-xs border border-border-soft rounded-full px-3 py-1.5 bg-surface text-text-secondary outline-none'
 						>
 							{tagOptions.map(t => (
 								<option key={t.value} value={t.value}>
@@ -359,13 +348,12 @@ export default function AdminPage() {
 							))}
 						</select>
 
-						{/* Категория — только для documentation */}
 						{isDoc && (
 							<>
 								<select
 									value={selectedCat}
 									onChange={e => setSelectedCat(e.target.value)}
-									className='text-xs border border-gray-200 dark:border-gray-700 rounded-lg px-2.5 py-1.5 bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-300 outline-none'
+									className='text-xs border border-border-soft rounded-full px-3 py-1.5 bg-surface text-text-secondary outline-none'
 								>
 									<option value='none'>Без категории</option>
 									{docOrder.map(cat => (
@@ -375,7 +363,6 @@ export default function AdminPage() {
 									))}
 								</select>
 
-								{/* Создать новую категорию */}
 								{showNewCat ? (
 									<>
 										<input
@@ -387,17 +374,17 @@ export default function AdminPage() {
 												if (e.key === 'Escape') setShowNewCat(false)
 											}}
 											placeholder='Название...'
-											className='text-xs border border-violet-300 dark:border-violet-700 rounded-lg px-2.5 py-1.5 bg-white dark:bg-gray-900 text-gray-900 dark:text-white outline-none w-32'
+											className='text-xs border border-accent/40 rounded-full px-3 py-1.5 bg-surface text-text-primary outline-none w-32'
 										/>
 										<button
 											onClick={handleAddCat}
-											className='text-xs bg-violet-600 text-white px-2.5 py-1.5 rounded-lg hover:bg-violet-700 transition-colors'
+											className='text-xs bg-accent text-white px-3 py-1.5 rounded-full hover:bg-accent-hover transition-colors'
 										>
 											ОК
 										</button>
 										<button
 											onClick={() => setShowNewCat(false)}
-											className='text-xs text-gray-400 hover:text-gray-600 px-1'
+											className='text-xs text-text-muted hover:text-text-secondary px-1'
 										>
 											✕
 										</button>
@@ -405,7 +392,7 @@ export default function AdminPage() {
 								) : (
 									<button
 										onClick={() => setShowNewCat(true)}
-										className='text-xs text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 border border-gray-200 dark:border-gray-700 rounded-lg px-2.5 py-1.5 transition-colors flex items-center gap-1'
+										className='text-xs text-text-muted hover:text-accent border border-border-soft rounded-full px-3 py-1.5 transition-colors flex items-center gap-1'
 									>
 										<FiPlus size={11} /> Новая категория
 									</button>
@@ -413,7 +400,7 @@ export default function AdminPage() {
 							</>
 						)}
 
-						<span className='text-xs bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 px-2.5 py-1 rounded-full border border-amber-200 dark:border-amber-800 ml-auto'>
+						<span className='text-xs bg-[var(--tag-os-bg)] text-[var(--tag-os-text)] px-3 py-1.5 rounded-full ml-auto'>
 							AI переведёт при публикации
 						</span>
 					</div>
@@ -423,53 +410,88 @@ export default function AdminPage() {
 						value={title}
 						onChange={e => setTitle(e.target.value)}
 						placeholder='Заголовок статьи...'
-						className='w-full px-5 py-4 text-lg font-medium border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-white outline-none placeholder-gray-300 dark:placeholder-gray-600'
+						className='w-full px-6 py-4 text-lg font-serif font-medium border-b border-border-soft bg-surface text-text-primary outline-none placeholder-text-muted'
 					/>
 
-					{/* Подсказка для документации */}
+					{/* Подсказка по markdown */}
 					{isDoc && (
-						<div className='px-5 py-2 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-800'>
-							<p className='text-xs text-gray-400 dark:text-gray-500'>
-								OREL Markdown: <span className='font-mono'># ## ###</span>{' '}
-								заголовки · <span className='font-mono'>**жирный**</span> ·{' '}
+						<div className='px-6 py-2.5 bg-surface-soft border-b border-border-soft'>
+							<p className='text-xs text-text-muted'>
+								Markdown: <span className='font-mono'># ## ###</span> заголовки ·{' '}
+								<span className='font-mono'>**жирный**</span> ·{' '}
 								<span className='font-mono'>*курсив*</span> ·{' '}
-								<span className='font-mono'>```</span> код ·{' '}
-								<span className='font-mono'>&gt;&gt;</span> инлайн-код ·{' '}
-								<span className='font-mono'>&gt;&gt;&gt;</span> терминал ·{' '}
+								<span className='font-mono'>`код`</span> ·{' '}
+								<span className='font-mono'>```блок```</span> ·{' '}
 								<span className='font-mono'>- список</span> ·{' '}
-								<span className='font-mono'>&gt; цитата</span>
+								<span className='font-mono'>&gt; цитата</span> ·{' '}
+								<span className='font-mono'>[ссылка](url)</span> ·{' '}
+								<span className='font-mono'>| таблицы |</span>
 							</p>
 						</div>
 					)}
 
-					{/* Тело */}
-					<textarea
-						value={body}
-						onChange={e => setBody(e.target.value)}
-						placeholder={
-							isDoc
-								? '# Введение\n\nПиши документацию на русском...'
-								: 'Пиши на русском — при публикации AI автоматически переведёт на EN, AR и UG...'
-						}
-						rows={18}
-						className='w-full px-5 py-4 text-sm bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 outline-none placeholder-gray-300 dark:placeholder-gray-600 resize-none leading-relaxed font-mono'
-					/>
+					{/* Переключатель write / preview */}
+					<div className='flex items-center gap-1 px-4 pt-3'>
+						<button
+							onClick={() => setEditorTab('write')}
+							className={`text-xs font-medium px-3.5 py-1.5 rounded-full transition-colors ${
+								editorTab === 'write'
+									? 'bg-text-primary text-page'
+									: 'text-text-secondary hover:bg-surface-soft'
+							}`}
+						>
+							Писать
+						</button>
+						<button
+							onClick={() => setEditorTab('preview')}
+							className={`text-xs font-medium px-3.5 py-1.5 rounded-full transition-colors ${
+								editorTab === 'preview'
+									? 'bg-text-primary text-page'
+									: 'text-text-secondary hover:bg-surface-soft'
+							}`}
+						>
+							Предпросмотр
+						</button>
+					</div>
+
+					{/* Тело / превью */}
+					{editorTab === 'write' ? (
+						<textarea
+							value={body}
+							onChange={e => setBody(e.target.value)}
+							placeholder={
+								isDoc
+									? '# Введение\n\nПиши документацию на русском...'
+									: 'Пиши на русском — при публикации AI автоматически переведёт на EN, AR и UG...'
+							}
+							rows={18}
+							className='w-full px-6 py-4 text-sm bg-surface text-text-secondary outline-none placeholder-text-muted resize-none leading-relaxed font-mono'
+						/>
+					) : (
+						<div className='px-6 py-4 min-h-[420px]'>
+							{body.trim() ? (
+								<MarkdownContent content={body} />
+							) : (
+								<p className='text-sm text-text-muted'>Нечего показывать — начни писать во вкладке «Писать»</p>
+							)}
+						</div>
+					)}
 
 					{/* Футер */}
-					<div className='flex items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800'>
+					<div className='flex items-center justify-between px-4 py-3 border-t border-border-soft bg-surface-soft'>
 						<div className='flex items-center gap-3'>
-							<span className='text-xs text-gray-400'>
+							<span className='text-xs text-text-muted'>
 								{body.length} символов
 							</span>
 							{isDoc && selectedCat !== 'none' && (
-								<span className='text-xs text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-950 px-2 py-0.5 rounded-full'>
+								<span className='text-xs text-accent-soft-text bg-accent-soft-bg px-2.5 py-0.5 rounded-full'>
 									{selectedCat}
 								</span>
 							)}
 						</div>
 						<div className='flex gap-2 items-center'>
 							{editorError && (
-								<p className='text-xs text-red-500'>{editorError}</p>
+								<p className='text-xs text-rose-500'>{editorError}</p>
 							)}
 							<Button
 								variant='secondary'
@@ -495,7 +517,7 @@ export default function AdminPage() {
 	return (
 		<div className='max-w-3xl mx-auto'>
 			<div className='flex items-center justify-between mb-6'>
-				<h1 className='text-lg font-medium text-gray-900 dark:text-white'>
+				<h1 className='font-serif text-lg font-semibold text-text-primary'>
 					Панель управления
 				</h1>
 				<div className='flex gap-2'>
@@ -515,7 +537,7 @@ export default function AdminPage() {
 					{[...Array(3)].map((_, i) => (
 						<div
 							key={i}
-							className='h-16 bg-gray-100 dark:bg-gray-800 rounded-2xl animate-pulse'
+							className='h-16 bg-surface-soft rounded-2xl animate-pulse'
 						/>
 					))}
 				</div>
@@ -523,7 +545,7 @@ export default function AdminPage() {
 
 			{!postsLoading && posts.length === 0 && (
 				<div className='text-center py-16'>
-					<p className='text-sm text-gray-400'>Статей пока нет</p>
+					<p className='text-sm text-text-muted'>Статей пока нет</p>
 				</div>
 			)}
 
@@ -532,21 +554,21 @@ export default function AdminPage() {
 					{posts.map(post => (
 						<div
 							key={post._id}
-							className='bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-3 flex items-center gap-3'
+							className='bg-surface rounded-3xl px-5 py-3.5 flex items-center gap-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
 						>
 							<span
-								className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${tagStyles[post.tag]}`}
+								className={`text-xs font-semibold px-2.5 py-1 rounded-full shrink-0 ${tagStyles[post.tag]}`}
 							>
 								{post.tag.toUpperCase()}
 							</span>
-							<p className='text-sm text-gray-900 dark:text-white flex-1 truncate'>
+							<p className='text-sm text-text-primary flex-1 truncate'>
 								{post.title}
 							</p>
 							<span
-								className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
+								className={`text-xs px-2.5 py-1 rounded-full shrink-0 ${
 									post.published
-										? 'bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300'
-										: 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'
+										? 'bg-[var(--tag-mobile-bg)] text-[var(--tag-mobile-text)]'
+										: 'bg-surface-soft text-text-muted'
 								}`}
 							>
 								{post.published ? 'Опубликовано' : 'Черновик'}
@@ -554,14 +576,14 @@ export default function AdminPage() {
 							<div className='flex items-center gap-1 shrink-0'>
 								<button
 									onClick={() => openEditor(post)}
-									className='p-1.5 text-gray-400 hover:text-violet-600 transition-colors'
+									className='p-1.5 text-text-muted hover:text-accent transition-colors'
 									title='Редактировать'
 								>
 									<FiEdit2 size={14} />
 								</button>
 								<button
 									onClick={() => void handleTogglePublish(post)}
-									className='p-1.5 text-gray-400 hover:text-green-600 transition-colors'
+									className='p-1.5 text-text-muted hover:text-emerald-600 transition-colors'
 									title={post.published ? 'Снять с публикации' : 'Опубликовать'}
 								>
 									{post.published ? (
@@ -572,7 +594,7 @@ export default function AdminPage() {
 								</button>
 								<button
 									onClick={() => void handleDelete(post._id)}
-									className='p-1.5 text-gray-400 hover:text-red-500 transition-colors'
+									className='p-1.5 text-text-muted hover:text-rose-500 transition-colors'
 									title='Удалить'
 								>
 									<FiTrash2 size={14} />
