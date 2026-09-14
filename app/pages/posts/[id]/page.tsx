@@ -78,14 +78,20 @@ export default function PostPage() {
     }
   }
 
-  const handleDeleteComment = async (index: number) => {
-    try {
-      await api.deleteComment(id, index.toString())
-      setPost(prev =>
-        prev ? { ...prev, comments: prev.comments.filter((_, i) => i !== index) } : prev,
-      )
-    } catch {}
-  }
+  const handleDeleteComment = async (commentId: string) => {
+  try {
+    await api.deleteComment(id, commentId)
+
+    setPost(prev =>
+      prev
+        ? {
+            ...prev,
+            comments: prev.comments.filter(comment => comment._id !== commentId),
+          }
+        : prev,
+    )
+  } catch {}
+}
 
   if (loading) {
     return (
@@ -171,7 +177,7 @@ export default function PostPage() {
                   <span className="text-xs text-text-muted">{formatDate(comment.createdAt)}</span>
                   {user && (user._id === comment.authorId || user.isAdmin) && (
                     <button
-                      onClick={() => void handleDeleteComment(index)}
+                      onClick={() => void handleDeleteComment(comment._id)}
                       className="text-xs text-rose-400 hover:text-rose-600 transition-colors"
                     >
                       Удалить
