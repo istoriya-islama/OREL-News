@@ -78,10 +78,8 @@ export default function PostPage() {
     }
   }
 
-  const handleDeleteComment = async (commentId: string, commentt: Comment) => {
+  const handleDeleteComment = async (commentId: string) => {
   try {
-    console.log('Comment:',  commentt)
-    console.log('Comment ID:',  commentt._id)
     await api.deleteComment(id, commentId)
 
     setPost(prev =>
@@ -179,7 +177,7 @@ export default function PostPage() {
                   <span className="text-xs text-text-muted">{formatDate(comment.createdAt)}</span>
                   {user && (user._id === comment.authorId || user.isAdmin) && (
                     <button
-                      onClick={() => void handleDeleteComment(comment._id, comment)}
+                      onClick={() => void handleDeleteComment(comment._id)}
                       className="text-xs text-rose-400 hover:text-rose-600 transition-colors"
                     >
                       Удалить
